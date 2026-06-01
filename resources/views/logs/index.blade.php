@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">Logs</h2>
+        <h2 class="font-semibold text-white text-xl">Logs</h2>
     </x-slot>
 
     <div class="py-6 max-w-7xl mx-auto">
@@ -11,11 +11,12 @@
 
                 <thead class="bg-gray-100 text-gray-700 uppercase text-xs">
                 <tr>
+                    <th class="p-2 text-center">ID</th>
                     <th class="p-2 text-center">Date</th>
                     <th class="p-2 text-left">Domain</th>
                     <th class="p-2 text-center">Result</th>
                     <th class="p-2 text-center">Code</th>
-                    <th class="p-2 text-center">Time (ms)</th>
+                    <th class="p-2 text-center">Time(ms)</th>
                     <th class="p-2 text-left">Error</th>
                     <th class="p-2 text-right">Actions</th>
                 </tr>
@@ -26,6 +27,10 @@
                 @foreach($logs as $log)
 
                     <tr class="hover:bg-gray-50 transition align-middle">
+
+                        <td class="p-2 text-center">
+                            {{ $log->id }}
+                        </td>
 
                         {{-- DATE --}}
                         <td class="p-2 text-center text-xs text-gray-500">
@@ -94,7 +99,7 @@
 
         {{-- SUCCESS MESSAGE --}}
         @if (session('success'))
-            <div class="mt-6 p-2 bg-green-100 text-green-700 rounded">
+            <div class="mt-6 p-2 bg-green-100 text-green-600 rounded">
                 {{ session('success') }}
             </div>
         @endif

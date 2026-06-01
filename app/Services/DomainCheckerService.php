@@ -14,14 +14,16 @@ class DomainCheckerService
         try {
             $start = microtime(true);
 
-            $response = $this->request($url, 'HEAD');
+            $method = $domain->check_method ?? 'HEAD';
+            $timeout = $domain->timeout ?? 5;
 
-            // fallback если HEAD не работает
-            if ($response->status() === 405 || $response->status() === 403) {
-                $response = $this->request($url, 'GET');
+            $response = $this->request($url, $method, $timeout);
+
+            if ($method === 'HEAD' && in_array($response->status(), [403, 405])) {
+                $response = $this->request($url, 'GET', $timeout);
             }
 
-            $time = microtime(true) - $start;
+            $timeMs = round((microtime(true) - $start) * 1000, 2);
 
             $status = $response->status();
             $success = $response->successful();
@@ -30,30 +32,49 @@ class DomainCheckerService
                 'domain_id' => $domain->id,
                 'response_result' => $success,
                 'response_code' => $status,
-                'response_time' => round($time * 1000, 2),
+                'response_time' => $timeMs,
+                'response_method' => $method,
+            ]);
+
+            $domain->update([
+                'last_checked_at' => now(),
+                'next_check_at' => now()->addMinutes($domain->check_interval),
             ]);
 
             return [
                 'success' => true,
                 'status' => $status,
                 'reachable' => $success,
-                'time_ms' => round($time * 1000, 2),
+                'time_ms' => $timeMs,
+                'method' => $method,
             ];
 
         } catch (\Throwable $e) {
+
+            $timeMs = isset($start)
+                ? round((microtime(true) - $start) * 1000, 2)
+                : null;
 
             Log::create([
                 'domain_id' => $domain->id,
                 'response_result' => false,
                 'response_error' => $e->getMessage(),
+                'response_time' => $timeMs,
+                'response_method' => $domain->check_method ?? 'HEAD',
+            ]);
+
+            $domain->update([
+                'last_checked_at' => now(),
+                'next_check_at' => now()->addMinutes($domain->check_interval),
             ]);
 
             return [
                 'success' => false,
                 'status' => null,
                 'reachable' => false,
-                'time_ms' => null,
+                'time_ms' => $timeMs,
                 'error' => $e->getMessage(),
+                'method' => $domain->check_method ?? 'HEAD',
             ];
         }
     }

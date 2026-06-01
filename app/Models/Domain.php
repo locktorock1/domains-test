@@ -10,6 +10,11 @@ class Domain extends Model
         'user_id',
         'domain',
         'title',
+        'check_method',
+        'timeout',
+        'check_interval',
+        'last_checked_at',
+        'next_check_at'
     ];
 
     public function user()
