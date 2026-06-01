@@ -41,13 +41,36 @@ class DomainController extends Controller
                 'max:255',
                 'regex:/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i',
             ],
+
             'title' => [
                 'nullable',
                 'string',
                 'max:255',
             ],
+
+            'check_method' => [
+                'required',
+                'in:GET,HEAD',
+            ],
+
+            'timeout' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:60',
+            ],
+
+            'check_interval' => [
+                'required',
+                'integer',
+                'in:1,5,15,30,60',
+            ],
         ], [
             'domain.regex' => 'Enter correct domain name (example.com)',
+            'check_method.in' => 'Method must be GET or HEAD',
+            'timeout.min' => 'Timeout must be at least 1 second',
+            'timeout.max' => 'Timeout cannot exceed 60 seconds',
+            'check_interval.in' => 'Invalid interval selected',
         ]);
 
         $domain = auth()->user()->domains()->create($data);
@@ -74,6 +97,8 @@ class DomainController extends Controller
      */
     public function edit(Domain $domain)
     {
+        $this->authorize('update', $domain);
+
         return view('domains.edit', compact('domain'));
     }
 
@@ -82,7 +107,7 @@ class DomainController extends Controller
      */
     public function update(DomainCheckerService $service, Request $request, Domain $domain)
     {
-//        $this->authorize('update', $domain);
+        $this->authorize('update', $domain);
 
         $data = $request->validate([
             'domain' => [
@@ -91,13 +116,36 @@ class DomainController extends Controller
                 'max:255',
                 'regex:/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i',
             ],
+
             'title' => [
                 'nullable',
                 'string',
                 'max:255',
             ],
+
+            'check_method' => [
+                'required',
+                'in:GET,HEAD',
+            ],
+
+            'timeout' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:60',
+            ],
+
+            'check_interval' => [
+                'required',
+                'integer',
+                'in:1,5,15,30,60',
+            ],
         ], [
             'domain.regex' => 'Enter correct domain name (example.com)',
+            'check_method.in' => 'Method must be GET or HEAD',
+            'timeout.min' => 'Timeout must be at least 1 second',
+            'timeout.max' => 'Timeout cannot exceed 60 seconds',
+            'check_interval.in' => 'Invalid interval selected',
         ]);
 
         $domain->update($data);
@@ -114,6 +162,8 @@ class DomainController extends Controller
      */
     public function destroy(Domain $domain)
     {
+        $this->authorize('delete', $domain);
+
         $domain->delete();
 
         return redirect()

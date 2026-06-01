@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">Domains</h2>
+        <h2 class="font-semibold text-white text-xl">Domains</h2>
     </x-slot>
 
     <div class="py-6 max-w-7xl mx-auto">
@@ -19,10 +19,14 @@
                     <th class="p-2 text-center">ID</th>
                     <th class="p-2 text-left">Domain</th>
                     <th class="p-2 text-left">Title</th>
+                    <th class="p-2 text-left">Method</th>
+                    <th class="p-2 text-left">Timeout(sec)</th>
+                    <th class="p-2 text-left">Interval</th>
                     <th class="p-2 text-center">Status</th>
                     <th class="p-2 text-center">Code</th>
-                    <th class="p-2 text-center">Time (ms)</th>
+                    <th class="p-2 text-center">Time(ms)</th>
                     <th class="p-2 text-center">Checked</th>
+                    <th class="p-2 text-center">Next Check</th>
                     <th class="p-2 text-right">Actions</th>
                 </tr>
                 </thead>
@@ -50,6 +54,23 @@
                         {{-- TITLE --}}
                         <td class="p-2 text-left text-gray-600">
                             {{ $domain->title ?? '-' }}
+                        </td>
+
+                        {{-- METHOD --}}
+                        <td class="p-3 text-center">
+                                <span class="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">
+                                    {{ $domain->check_method }}
+                                </span>
+                        </td>
+
+                        {{-- TIMEOUT --}}
+                        <td class="p-3 text-center text-gray-700">
+                            {{ $domain->timeout }}s
+                        </td>
+
+                        {{-- INTERVAL --}}
+                        <td class="p-3 text-center text-gray-700">
+                            {{ $domain->check_interval }}m
                         </td>
 
                         {{-- STATUS --}}
@@ -82,6 +103,11 @@
                         {{-- CHECKED AT --}}
                         <td class="p-2 text-center text-xs text-gray-500">
                             {{ $log?->created_at?->format('Y-m-d H:i') ?? '-' }}
+                        </td>
+
+                        {{-- NEXT CHECK --}}
+                        <td class="p-2 text-center text-xs text-gray-500">
+                            {{ $domain->next_check_at ?? '-' }}
                         </td>
 
                         {{-- ACTIONS --}}
@@ -126,7 +152,7 @@
         </div>
 
         @if (session('success'))
-            <div class="mt-6 p-2 bg-green-100 text-green-700 rounded">
+            <div class="mt-6 p-2 bg-green-100 text-green-600 rounded">
                 {{ session('success') }}
             </div>
         @endif

@@ -66,6 +66,10 @@ class LogController extends Controller
      */
     public function destroy(Log $log)
     {
-        //
+        $log->delete();
+
+        return redirect()
+            ->route('logs.index')
+            ->with('success', 'Log #' . $log->id . ' deleted successfully');
     }
 }
