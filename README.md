@@ -86,11 +86,15 @@ cp .env.example .env
 docker-compose up -d --build
 
 ## 📦 Setup Application
-docker exec -it app composer install
-docker exec -it app npm install
-docker exec -it app npm run build
-docker exec -it app php artisan key:generate
-docker exec -it app php artisan migrate
+docker exec -it laravel_app composer install
+
+docker exec -it laravel_app npm install
+
+docker exec -it laravel_app npm run build
+
+docker exec -it laravel_app php artisan key:generate
+
+docker exec -it laravel_app php artisan migrate
 
 ## ⏱️ Scheduler Setup
 * * * * * php /var/www/artisan schedule:run >> /dev/null 2>&1
