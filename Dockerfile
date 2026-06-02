@@ -23,7 +23,7 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 RUN npm install
 RUN npm run build
 
-# permissions (важно для Laravel)
+# permissions (важно для Laravel)1
 RUN chmod -R 775 storage bootstrap/cache
 
 # nginx config
