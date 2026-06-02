@@ -1,5 +1,8 @@
 FROM php:8.3-fpm
 
+# ========================
+# SYSTEM DEPENDENCIES
+# ========================
 RUN apt-get update && apt-get install -y \
     nginx \
     git curl zip unzip \
@@ -7,55 +10,61 @@ RUN apt-get update && apt-get install -y \
 
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 
-# Node.js
+# ========================
+# NODEJS
+# ========================
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
-# Composer
+# ========================
+# COMPOSER
+# ========================
 RUN curl -sS https://getcomposer.org/installer | php -- \
     --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www
 
-# =========================
-# 1. INSTALL PHP DEPENDENCIES
-# =========================
-COPY composer.json composer.lock ./
+# ========================
+# COPY PROJECT FIRST (IMPORTANT FIX)
+# ========================
+COPY . .
+
+# ========================
+# PHP DEPENDENCIES
+# ========================
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 RUN composer install \
     --no-interaction \
     --prefer-dist \
-    --no-scripts
+    --optimize-autoloader
 
-# =========================
-# 2. COPY FULL PROJECT
-# =========================
-COPY . .
-
-# =========================
-# 3. RUN LARAVEL SCRIPTS
-# =========================
+# ========================
+# LARAVEL SETUP
+# ========================
+RUN php artisan optimize:clear || true
 RUN php artisan package:discover || true
 
-# =========================
-# 4. FRONTEND BUILD
-# =========================
-COPY package.json package-lock.json ./
+# ========================
+# FRONTEND BUILD
+# ========================
 RUN npm install
 RUN npm run build
 
-# =========================
-# 5. PERMISSIONS
-# =========================
+# ========================
+# PERMISSIONS
+# ========================
 RUN chmod -R 775 storage bootstrap/cache
 
-# =========================
-# 6. NGINX
-# =========================
+# ========================
+# NGINX CONFIG
+# ========================
 RUN rm -f /etc/nginx/conf.d/default.conf
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
+# ========================
+# START (SAFE FOR RAILWAY)
+# ========================
 CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
