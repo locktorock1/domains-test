@@ -23,7 +23,7 @@ RUN npm run build
 RUN chmod -R 775 storage bootstrap/cache
 
 # nginx config
-COPY docker/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 
