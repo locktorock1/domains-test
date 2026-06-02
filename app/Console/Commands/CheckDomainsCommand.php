@@ -18,7 +18,11 @@ class CheckDomainsCommand extends Command
      */
     public function handle(DomainCheckerService $checker)
     {
-        $domains = Domain::all();
+        $domains = Domain::whereNull('next_check_at')
+            ->orWhere('next_check_at', '<=', now())
+            ->orderBy('next_check_at')
+            ->limit(20)
+            ->get();
 
         foreach ($domains as $domain) {
 
