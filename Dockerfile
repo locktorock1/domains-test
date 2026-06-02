@@ -15,3 +15,7 @@ RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
+
+COPY . .
+
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
