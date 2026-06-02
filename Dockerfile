@@ -27,4 +27,4 @@ RUN chmod -R 775 storage bootstrap/cache
 
 EXPOSE 9000
 
-CMD sh -c "php -S 0.0.0.0:$PORT -t public"
+CMD php artisan serve --host=0.0.0.0 --port=8080
