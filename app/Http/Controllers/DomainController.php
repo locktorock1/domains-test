@@ -39,6 +39,7 @@ class DomainController extends Controller
                 'required',
                 'string',
                 'max:255',
+                'unique:domains,domain',
                 'regex:/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i',
             ],
 
@@ -67,17 +68,14 @@ class DomainController extends Controller
             ],
         ], [
             'domain.regex' => 'Enter correct domain name (example.com)',
+            'domain.unique' => 'This domain name already exists',
             'check_method.in' => 'Method must be GET or HEAD',
             'timeout.min' => 'Timeout must be at least 1 second',
             'timeout.max' => 'Timeout cannot exceed 60 seconds',
             'check_interval.in' => 'Invalid interval selected',
         ]);
 
-        $domain = auth()->user()->domains()->create($data);
-
-        if ($domain) {
-            $service->check($domain);
-        }
+        auth()->user()->domains()->create($data);
 
         return redirect()
             ->route('domains.index')
@@ -114,6 +112,7 @@ class DomainController extends Controller
                 'required',
                 'string',
                 'max:255',
+                'unique:domains,domain',
                 'regex:/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i',
             ],
 
@@ -142,6 +141,7 @@ class DomainController extends Controller
             ],
         ], [
             'domain.regex' => 'Enter correct domain name (example.com)',
+            'domain.unique' => 'This domain name already exists',
             'check_method.in' => 'Method must be GET or HEAD',
             'timeout.min' => 'Timeout must be at least 1 second',
             'timeout.max' => 'Timeout cannot exceed 60 seconds',
