@@ -9,16 +9,13 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 
 RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl
 
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 WORKDIR /var/www
 
-COPY composer.json composer.lock ./
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-
-COPY package.json package-lock.json ./
-RUN npm install
-
 COPY . .
 
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+RUN npm install
 RUN npm run build
