@@ -14,15 +14,20 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 WORKDIR /var/www
 
+COPY composer.json composer.lock ./
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
+COPY package.json package-lock.json ./
+RUN npm install
+
 COPY . .
 
-RUN composer install --no-interaction --prefer-dist --optimize-autoloader
-RUN npm install
 RUN npm run build
 
 RUN chmod -R 775 storage bootstrap/cache
 
-# nginx config
+# nginx
+RUN rm -f /etc/nginx/conf.d/default.conf
 COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
