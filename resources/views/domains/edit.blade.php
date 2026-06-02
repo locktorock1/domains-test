@@ -24,7 +24,7 @@
                                class="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500">
 
                         @error('domain')
-                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                         @enderror
                     </div>
 
