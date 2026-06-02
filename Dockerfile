@@ -4,7 +4,6 @@ FROM php:8.3-fpm
 # SYSTEM DEPENDENCIES
 # ========================
 RUN apt-get update && apt-get install -y \
-    nginx \
     git curl zip unzip \
     libzip-dev libpng-dev libonig-dev libxml2-dev
 
@@ -25,7 +24,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- \
 WORKDIR /var/www
 
 # ========================
-# COPY PROJECT FIRST (IMPORTANT FIX)
+# COPY PROJECT
 # ========================
 COPY . .
 
@@ -40,7 +39,7 @@ RUN composer install \
     --optimize-autoloader
 
 # ========================
-# LARAVEL SETUP
+# LARAVEL OPTIMIZE
 # ========================
 RUN php artisan optimize:clear || true
 RUN php artisan package:discover || true
@@ -56,16 +55,9 @@ RUN npm run build
 # ========================
 RUN chmod -R 775 storage bootstrap/cache
 
-# ========================
-# NGINX CONFIG
-# ========================
-RUN rm -rf /etc/nginx/sites-enabled || true
-RUN rm -f /etc/nginx/conf.d/default.conf
-COPY docker/nginx/default.conf /etc/nginx/conf.d/app.conf
-
-EXPOSE 80
+EXPOSE 8000
 
 # ========================
-# START (SAFE FOR RAILWAY)
+# START (RAILWAY)
 # ========================
-CMD sh -c "php-fpm -D && nginx -g 'daemon off;'"
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
