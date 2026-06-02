@@ -59,8 +59,9 @@ RUN chmod -R 775 storage bootstrap/cache
 # ========================
 # NGINX CONFIG
 # ========================
+RUN rm -rf /etc/nginx/sites-enabled || true
 RUN rm -f /etc/nginx/conf.d/default.conf
-COPY docker/nginx/default.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx/default.conf /etc/nginx/conf.d/app.conf
 
 EXPOSE 80
 
