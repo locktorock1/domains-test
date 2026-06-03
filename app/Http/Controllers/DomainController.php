@@ -155,8 +155,6 @@ class DomainController extends Controller
 
         $domain->update($data);
 
-        $service->check($domain);
-
         return redirect()
             ->route('domains.index')
             ->with('success', 'Domain updated successfully');
