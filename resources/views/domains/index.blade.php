@@ -102,7 +102,7 @@
 
                         {{-- CHECKED AT --}}
                         <td class="p-2 text-center text-xs text-gray-500">
-                            {{ $log?->created_at?->format('Y-m-d H:i') ?? '-' }}
+                            {{ $domain->last_checked_at ?? '-' }}
                         </td>
 
                         {{-- NEXT CHECK --}}
