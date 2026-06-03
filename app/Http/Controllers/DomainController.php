@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Domain;
 use App\Services\DomainCheckerService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class DomainController extends Controller
 {
@@ -39,8 +40,10 @@ class DomainController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'unique:domains,domain',
                 'regex:/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i',
+                Rule::unique('domains')->where(function ($query) {
+                    return $query->where('user_id', auth()->id());
+                }),
             ],
 
             'title' => [
@@ -112,8 +115,10 @@ class DomainController extends Controller
                 'required',
                 'string',
                 'max:255',
-                'unique:domains,domain',
                 'regex:/^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i',
+                Rule::unique('domains')
+                    ->where(fn ($query) => $query->where('user_id', auth()->id()))
+                    ->ignore($domain->id),
             ],
 
             'title' => [
